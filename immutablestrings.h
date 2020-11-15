@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*typedef struct vector_s {
+    void *value;
+    int length;
+} vector;*/
+
 typedef struct string_s {
     char *value;
     void (*print)(struct string_s *);
