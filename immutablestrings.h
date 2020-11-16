@@ -2,10 +2,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*typedef struct vector_s {
-    void *value;
-    int length;
-} vector;*/
+
+/*
+--------------------------------------------------
+    Simple Linked Lists
+--------------------------------------------------
+*/
+
+//void *initializeList(void *nodestruct) {
+
+    
+
+//}
+
+
+/*
+--------------------------------------------------
+    Better Strings
+--------------------------------------------------
+*/
 
 typedef struct string_s {
     char *value;
