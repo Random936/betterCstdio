@@ -19,43 +19,43 @@ typedef struct string_s {
 
 string allocateString(char *initstring);
 
-void stringprint(string *this) {
-    printf("%s\n", this->value);
+void stringprint(string *self) {
+    printf("%s\n", self->value);
 }
 
-int stringlength(string *this) {
+int stringlength(string *self) {
     int length;
-    for (length = 0; this->value[length] != 0; length++);
+    for (length = 0; self->value[length] != 0; length++);
     return length;
 }
 
-void stringappend(string *this, char *to_append) {
+void stringappend(string *self, char *to_append) {
 
-    int appendlen, thislen, totallen;
+    int appendlen, selflen, totallen;
     for (appendlen = 0; to_append[appendlen] != '\0'; appendlen++);
-    thislen = this->length(this);
-    totallen = appendlen + thislen;
+    selflen = self->length(self);
+    totallen = appendlen + selflen;
 
     char *tempptr = malloc(sizeof(char) * totallen + 1);
-    for (int i = 0; i <= thislen; i++) {
-        tempptr[i] = this->value[i];
+    for (int i = 0; i <= selflen; i++) {
+        tempptr[i] = self->value[i];
     }
     for (int i = 0; i <= appendlen; i++) {
-        tempptr[i + thislen] = to_append[i];
+        tempptr[i + selflen] = to_append[i];
     } tempptr[totallen] = '\0';
 
-    free(this->value);
-    this->value = tempptr;
+    free(self->value);
+    self->value = tempptr;
 }
 
-int stringfind(string *this, char *to_find) {
+int stringfind(string *self, char *to_find) {
 
     int findlen, match;
     for (findlen = 0; to_find[findlen] != '\0'; findlen++);
 
-    for (int i = 0; this->value[i] != '\0'; i++) {
-        if (this->value[i] == to_find[0]) {
-            for (match = 0; (to_find[match] == this->value[i + match]) && (to_find[match] != '\0'); match++);
+    for (int i = 0; self->value[i] != '\0'; i++) {
+        if (self->value[i] == to_find[0]) {
+            for (match = 0; (to_find[match] == self->value[i + match]) && (to_find[match] != '\0'); match++);
             if (match >= findlen) {
                 return i;
             }
@@ -65,7 +65,7 @@ int stringfind(string *this, char *to_find) {
     return -1;
 }
 
-char *stringsubstring(string *this, int startpos, int endpos) {
+char *stringsubstring(string *self, int startpos, int endpos) {
 
     int sublength = endpos - startpos;
     char *returnedstring = malloc(sizeof(char) * sublength);
@@ -74,34 +74,34 @@ char *stringsubstring(string *this, int startpos, int endpos) {
         return NULL;
     }
     for (int i = 0; i < sublength; i++) {
-        returnedstring[i] = this->value[startpos + i];
+        returnedstring[i] = self->value[startpos + i];
     } returnedstring[sublength] = '\0';
 
     return returnedstring;
 }
 
-void stringreplace(string *this, char *to_replace, char *replacement) {
+void stringreplace(string *self, char *to_replace, char *replacement) {
 
     int to_replace_len, foundpos;
     for (to_replace_len = 0; to_replace[to_replace_len] != '\0'; to_replace_len++);
 
     string returnedstring = allocateString("");
-    while ((foundpos = this->find(this, to_replace)) != -1) {
-        char *substring = this->substr(this, 0, foundpos);
+    while ((foundpos = self->find(self, to_replace)) != -1) {
+        char *substring = self->substr(self, 0, foundpos);
         returnedstring.append(&returnedstring, substring);
         free(substring);
         returnedstring.append(&returnedstring, replacement);
-        this->value += foundpos + to_replace_len;
+        self->value += foundpos + to_replace_len;
     }
 
-    if (this->value[0] != '\0') {
-        char *substring = this->substr(this, 0, this->length(this));
+    if (self->value[0] != '\0') {
+        char *substring = self->substr(self, 0, self->length(self));
         returnedstring.append(&returnedstring, substring);
         free(substring);
     }
 
-    free(this->value);
-    this->value = returnedstring.value;
+    free(self->value);
+    self->value = returnedstring.value;
 }
 
 string allocateString(char *initstring) {
