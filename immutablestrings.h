@@ -9,11 +9,11 @@
 --------------------------------------------------
 */
 
-//void *initializeList(void *nodestruct) {
+void *initializeList(void *nodestruct) {
 
     
 
-//}
+}
 
 
 /*
@@ -25,6 +25,7 @@
 typedef struct string_s {
     char *value;
     void (*print)(struct string_s *);
+    void (*input)(struct string_s *, int);
     int (*length)(struct string_s *);
     void (*append)(struct string_s *, char*);
     int (*find)(struct string_s *, char *);
@@ -36,6 +37,26 @@ string allocateString(char *initstring);
 
 void stringprint(string *self) {
     printf("%s\n", self->value);
+}
+
+void stringinput(string *self, int blocksize) {
+    
+    FILE *stdinfd = stdin;
+    char current;
+    int mallocsize = blocksize;
+    char *userinput = malloc(sizeof(char) * mallocsize);
+
+    int length;
+    for (length = 0; (current = getc(stdin)) != '\n'; length++) {
+        if (length >= mallocsize - 1) {
+            mallocsize += blocksize;
+            userinput = realloc(userinput, sizeof(char) * mallocsize);
+        }
+        userinput[length] = current;
+    } userinput[length] = '\0';
+
+    free(self->value);
+    self->value = userinput;
 }
 
 int stringlength(string *self) {
@@ -133,6 +154,7 @@ string allocateString(char *initstring) {
     string string_default = {
         immutablestring,
         &stringprint,
+        &stringinput,
         &stringlength,
         &stringappend,
         &stringfind,
