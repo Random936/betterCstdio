@@ -5,15 +5,9 @@
 
 /*
 --------------------------------------------------
-    Simple Linked Lists
+    Easy Vectors
 --------------------------------------------------
 */
-
-void *initializeList(void *nodestruct) {
-
-    
-
-}
 
 
 /*
