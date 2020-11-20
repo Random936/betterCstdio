@@ -9,8 +9,6 @@
 --------------------------------------------------
 */
 
-
-
 typedef struct list_node_s {
     void *value;
     struct list_node_s *next;

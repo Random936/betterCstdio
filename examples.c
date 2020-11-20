@@ -2,7 +2,20 @@
 
 int main() {
 
+    
+
+    // Simple Linked List features!
+    printf("-----BETTER LINKED LIST FEATURES-----\n");
+    
+    list linkedlist = initList();
+    linkedlist.createNode(&linkedlist, "This");
+    linkedlist.createNode(&linkedlist, "prints");
+    linkedlist.createNode(&linkedlist, "backwards!");
+    linkedlist.print(&linkedlist);
+
     // Better String features!
+    printf("\n-----BETTER STRING FEATURES-----\n");
+
     string test = initString("Tester");
     test.print(&test);
     test.append(&test, " test!");
@@ -15,11 +28,6 @@ int main() {
     test.input(&test, 5);
     printf("User typed: ");
     test.print(&test);
-
-    // Simple Linked List features!
-    list linkedlist = initList();
-    linkedlist.createNode(&linkedlist, "String!");
-    linkedlist.print(&linkedlist);
 
     return 0;
 }
