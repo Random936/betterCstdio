@@ -5,9 +5,55 @@
 
 /*
 --------------------------------------------------
-    Easy Vectors
+    Easy Linked Lists
 --------------------------------------------------
 */
+
+
+
+typedef struct list_node_s {
+    void *value;
+    struct list_node_s *next;
+} list_node;
+
+typedef struct list_s {
+    void (*createNode) (struct list_s *, void *);
+    void (*print) (struct list_s *);
+    int valuesize;
+    struct list_node_s *head;
+} list;
+
+void list_createNode(list *self, void *data) {
+    
+    self->valuesize++;
+    list_node *node = malloc(sizeof(list_node));
+    node->value = data;
+
+    if (self->head == NULL) {
+        node->next = NULL;
+        self->head = node;
+    } else {
+        node->next = self->head;
+        self->head = node;
+    }
+}
+
+void list_print(list *self) {
+    list_node *temp = self->head;
+    while (temp != NULL) {
+        printf("%s\n", temp->value);
+        temp = temp->next;
+    }
+}
+
+list initList() {
+    list list_default = {
+        &list_createNode,
+        &list_print,
+        0
+    };
+    return list_default;
+}
 
 
 /*
@@ -27,13 +73,13 @@ typedef struct string_s {
     void (*replace)(struct string_s *, char *, char *);
 } string;
 
-string allocateString(char *initstring);
+string initString(char *initstring);
 
-void stringprint(string *self) {
+void string_print(string *self) {
     printf("%s\n", self->value);
 }
 
-void stringinput(string *self, int blocksize) {
+void string_input(string *self, int blocksize) {
     
     FILE *stdinfd = stdin;
     char current;
@@ -53,13 +99,13 @@ void stringinput(string *self, int blocksize) {
     self->value = userinput;
 }
 
-int stringlength(string *self) {
+int string_length(string *self) {
     int length;
     for (length = 0; self->value[length] != 0; length++);
     return length;
 }
 
-void stringappend(string *self, char *to_append) {
+void string_append(string *self, char *to_append) {
 
     int appendlen, selflen, totallen;
     for (appendlen = 0; to_append[appendlen] != '\0'; appendlen++);
@@ -78,7 +124,7 @@ void stringappend(string *self, char *to_append) {
     self->value = tempptr;
 }
 
-int stringfind(string *self, char *to_find) {
+int string_find(string *self, char *to_find) {
 
     int findlen, match;
     for (findlen = 0; to_find[findlen] != '\0'; findlen++);
@@ -95,7 +141,7 @@ int stringfind(string *self, char *to_find) {
     return -1;
 }
 
-char *stringsubstring(string *self, int startpos, int endpos) {
+char *string_substring(string *self, int startpos, int endpos) {
 
     int sublength = endpos - startpos;
     char *returnedstring = malloc(sizeof(char) * sublength);
@@ -110,12 +156,12 @@ char *stringsubstring(string *self, int startpos, int endpos) {
     return returnedstring;
 }
 
-void stringreplace(string *self, char *to_replace, char *replacement) {
+void string_replace(string *self, char *to_replace, char *replacement) {
 
     int to_replace_len, foundpos;
     for (to_replace_len = 0; to_replace[to_replace_len] != '\0'; to_replace_len++);
 
-    string returnedstring = allocateString("");
+    string returnedstring = initString("");
     while ((foundpos = self->find(self, to_replace)) != -1) {
         char *substring = self->substr(self, 0, foundpos);
         returnedstring.append(&returnedstring, substring);
@@ -134,7 +180,7 @@ void stringreplace(string *self, char *to_replace, char *replacement) {
     self->value = returnedstring.value;
 }
 
-string allocateString(char *initstring) {
+string initString(char *initstring) {
 
     int stringlen;
     for (stringlen = 0; initstring[stringlen] != '\0'; stringlen++);
@@ -147,13 +193,13 @@ string allocateString(char *initstring) {
 
     string string_default = {
         immutablestring,
-        &stringprint,
-        &stringinput,
-        &stringlength,
-        &stringappend,
-        &stringfind,
-        &stringsubstring,
-        &stringreplace
+        &string_print,
+        &string_input,
+        &string_length,
+        &string_append,
+        &string_find,
+        &string_substring,
+        &string_replace
     };
 
     return string_default;
