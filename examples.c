@@ -2,10 +2,6 @@
 
 int main() {
 
-    string newstring = initString("The word temp will be replaced");
-    newstring.replace(&newstring, "temp", "replaced");
-    newstring.print(&newstring);
-
     // Simple Linked List features!
     printf("-----BETTER LINKED LIST FEATURES-----\n");
     
