@@ -37,7 +37,7 @@ newstring.print(&newstring);
 Following print, there is also an **input** function that dynamically allocated the input. Realloc is not intended to be used in a iterative manor as it is constantly searching for free memory spaces. Due to this, a blocksize argument is used to allow for more efficient allocation. For example, if you know that you will be allocating over one kilobyte of data, a block size of one kilobyte is an efficient choice. This blocksize will reallocate an extra kilobyte when needed. An example of this is shown below.
 ```
 // This takes user input with a blocksize of one kilobyte
-newstring.input(&test, 1024);
+newstring.input(&newstring, 1024);
 ```
 
 **find** is another function that, as described by the name, will return the position of the first matching substring. For example, if the string is "This is a test" and the selector is "test", the returned integer will be 10.
