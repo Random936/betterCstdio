@@ -1,4 +1,5 @@
 #include "immutablestrings.h"
+#include "simplelinkedlists.h"
 
 // This function is used to create a node template.
 declareLinkedList(char *, list_s, list, listnode_s, listnode)
@@ -12,7 +13,6 @@ int main() {
     linkedlist.createNode(&linkedlist, "This");
     linkedlist.createNode(&linkedlist, "prints");
     linkedlist.createNode(&linkedlist, "backwards!");
-    printf("Before linkedlist.print function.\n");
     linkedlist.print(&linkedlist, "%s\n");
 
     // Better String features!
