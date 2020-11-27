@@ -10,13 +10,13 @@
 
 typedef struct string_s {
     char *value;
-    void (*print)(struct string_s *);
-    void (*input)(struct string_s *, int);
-    int (*length)(struct string_s *);
-    void (*append)(struct string_s *, char*);
-    int (*find)(struct string_s *, char *);
-    char *(*substr)(struct string_s *, int, int);
-    void (*replace)(struct string_s *, char *, char *);
+    void (*print)(struct string_s *self);
+    void (*input)(struct string_s *self, int blocksize);
+    int (*length)(struct string_s *self);
+    void (*append)(struct string_s *self, char *to_append);
+    int (*find)(struct string_s *self, char *to_find);
+    char *(*substr)(struct string_s *self, int startpos, int endpos);
+    void (*replace)(struct string_s *self, char *to_replace, char *replacement);
 } string;
 
 string initString(char *initstring);

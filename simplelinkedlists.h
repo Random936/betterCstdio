@@ -15,8 +15,8 @@ typedef struct list_node_s { \
 } list_node; \
  \
 typedef struct list_s { \
-    void (*createNode) (struct list_s *, type); \
-    void (*print) (struct list_s *, char *); \
+    void (*createNode) (struct list_s *self, type data); \
+    void (*print) (struct list_s *self, char *formatter); \
     int valuesize; \
     struct list_node_s *head; \
 } list; \

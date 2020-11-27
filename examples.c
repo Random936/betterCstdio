@@ -27,9 +27,8 @@ int main() {
     test.replace(&test, "test", "supercalafragalisticexpialadocious");
     printf("Replaced: %s\n", test.value);
     printf("Userinput test: ");
-    test.input(&test, 5);
-    printf("User typed: ");
-    test.print(&test);
+    test.input(&test, 1024);
+    printf("User typed: %s\nThe length was %d\n", test.value, test.length(&test));
 
     return 0;
 }
