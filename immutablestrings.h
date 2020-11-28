@@ -8,23 +8,23 @@
 --------------------------------------------------
 */
 
-#define declareLinkedList(type, list_s, list, list_node_s, list_node) \
-typedef struct list_node_s { \
+typedef struct list_s {
+    int valuesize;
+    void (*createNode)(struct list_s *self, ...);
+    void (*print)(struct list_s *self, char *formatter);
+    void *head;
+} list;
+
+#define declareLinkedList(type, list_node_s) \
+struct list_node_s { \
     type value; \
     struct list_node_s *next; \
-} list_node; \
- \
-typedef struct list_s { \
-    void (*createNode) (struct list_s *self, type data); \
-    void (*print) (struct list_s *self, char *formatter); \
-    int valuesize; \
-    struct list_node_s *head; \
-} list; \
+}; \
  \
 void list_createNode(list *self, type data) { \
  \
     self->valuesize++; \
-    list_node *node = malloc(sizeof(list_node)); \
+    struct list_node_s *node = malloc(sizeof(struct list_node_s)); \
     node->value = data; \
  \
     if (self->head == NULL) { \
@@ -37,7 +37,7 @@ void list_createNode(list *self, type data) { \
 } \
  \
 void list_print(list *self, char *formatter) { \
-    list_node *temp = self->head; \
+    struct list_node_s *temp = self->head; \
     while (temp != NULL) { \
         printf(formatter, temp->value); \
         temp = temp->next; \
@@ -47,9 +47,9 @@ void list_print(list *self, char *formatter) { \
 list initList() { \
  \
     list list_default = { \
+        0, \
         &list_createNode, \
-        &list_print, \
-        0 \
+        &list_print \
     }; \
     return list_default; \
 }

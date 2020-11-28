@@ -1,19 +1,19 @@
 #include "immutablestrings.h"
-#include "simplelinkedlists.h"
 
 // This function is used to create a node template.
-declareLinkedList(char *, list_s, list, listnode_s, listnode)
+declareLinkedList(int, listnode)
 
 int main() {
 
     // Simple Linked List features!
     printf("-----BETTER LINKED LIST FEATURES-----\n");
     
-    list linkedlist = initList();
-    linkedlist.createNode(&linkedlist, "This");
-    linkedlist.createNode(&linkedlist, "prints");
-    linkedlist.createNode(&linkedlist, "backwards!");
-    linkedlist.print(&linkedlist, "%s\n");
+    list newlist;
+    list_createNode(&newlist, 32);
+    list_createNode(&newlist, 52);
+    list_createNode(&newlist, 62);
+    list_print(&newlist, "%d\n");
+    printf("Length: %d\n", newlist.valuesize);
 
     // Better String features!
     printf("\n-----BETTER STRING FEATURES-----\n");
