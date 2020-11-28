@@ -4,6 +4,57 @@
 
 /*
 --------------------------------------------------
+    Easy Linked Lists
+--------------------------------------------------
+*/
+
+typedef struct list_s {
+    int valuesize;
+    void (*createNode)();
+    void (*print)(struct list_s *self, char *formatter);
+    void *head;
+} list;
+
+#define declareLinkedList(type, name) \
+struct name { \
+    type value; \
+    struct name *next; \
+}; \
+ \
+void createNode_##name(list *self, type data) { \
+ \
+    self->valuesize++; \
+    struct name *node = malloc(sizeof(struct name)); \
+    node->value = data; \
+ \
+    if (self->head == NULL) { \
+        node->next = NULL; \
+        self->head = node; \
+    } else { \
+        node->next = self->head; \
+        self->head = node; \
+    } \
+} \
+ \
+void print_##name(list *self, char *formatter) { \
+    struct name *temp = self->head; \
+    while (temp != NULL) { \
+        printf(formatter, temp->value); \
+        temp = temp->next; \
+    } \
+} \
+ \
+list initList_##name() { \
+    list list_default = { \
+        0, \
+        &createNode_##name, \
+        &print_##name \
+    }; \
+    return list_default; \
+} \
+
+/*
+--------------------------------------------------
     Better Strings
 --------------------------------------------------
 */
@@ -136,7 +187,6 @@ string initString(char *initstring) {
         immutablestring[i] = initstring[i];
     } immutablestring[stringlen] = '\0';
     
-
     string string_default = {
         immutablestring,
         &string_print,
