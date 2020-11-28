@@ -33,7 +33,7 @@ typedef struct http_s {
 
 void http_get(http_t *self, char *url) {
 
-#ifdef _WIN32
+/*#ifdef _WIN32
     WSADATA wsaData;
     SOCKET sock;
     struct hostent *host;
@@ -80,4 +80,5 @@ void http_get(http_t *self, char *url) {
     printf("IP address: %s\n", inet_ntoa();
     closesocket(sock);
     WSACleanup();
+    */
 }
