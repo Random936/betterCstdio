@@ -1,6 +1,7 @@
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
 
 /*
 --------------------------------------------------
@@ -11,6 +12,7 @@
 typedef struct list_s {
     int valuesize;
     void (*createNode)();
+    void (*deleteNode)();
     void (*print)(struct list_s *self, char *formatter);
     void *head;
 } list;
@@ -36,6 +38,26 @@ void createNode_##name(list *self, type data) { \
     } \
 } \
  \
+void deleteNode_##name(list *self, int position) { \
+    struct name *prev = NULL; \
+    struct name *temp = self->head; \
+    for (int i = 0; i < position && temp->next != NULL; i++) { \
+        prev = temp; \
+        temp = temp->next; \
+    } \
+ \
+    if (prev == NULL) { \
+        self->head = temp->next; \
+    } else if (temp->next != NULL) { \
+        prev->next = temp->next; \
+    } else { \
+        prev->next = NULL; \
+    } \
+ \
+    self->valuesize--; \
+    free(temp); \
+} \
+ \
 void print_##name(list *self, char *formatter) { \
     struct name *temp = self->head; \
     while (temp != NULL) { \
@@ -48,6 +70,7 @@ list initList_##name() { \
     list list_default = { \
         0, \
         &createNode_##name, \
+        &deleteNode_##name, \
         &print_##name \
     }; \
     return list_default; \
