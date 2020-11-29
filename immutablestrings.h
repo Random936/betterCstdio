@@ -12,6 +12,7 @@
 typedef struct list_s {
     int valuesize;
     void (*createNode)();
+    void (*insertNode)();
     void (*deleteNode)();
     void (*print)(struct list_s *self, char *formatter);
     void *head;
@@ -36,6 +37,29 @@ void createNode_##name(list *self, type data) { \
         node->next = self->head; \
         self->head = node; \
     } \
+} \
+ \
+void insertNode_##name(list *self, int position, type data) { \
+ \
+    self->valuesize++; \
+    struct name *prev = NULL; \
+    struct name *temp = self->head; \
+    struct name *insert = malloc(sizeof(struct name)); \
+    insert->value = data; \
+ \
+    for (int i = 0; i < position && temp != NULL; i++) { \
+        prev = temp; \
+        temp = temp->next; \
+    } \
+ \
+    if (prev == NULL) { \
+        insert->next = self->head; \
+        self->head = insert; \
+    } else { \
+        prev->next = insert; \
+        insert->next = temp; \
+    } \
+ \
 } \
  \
 void deleteNode_##name(list *self, int position) { \
@@ -70,6 +94,7 @@ list initList_##name() { \
     list list_default = { \
         0, \
         &createNode_##name, \
+        &insertNode_##name, \
         &deleteNode_##name, \
         &print_##name \
     }; \

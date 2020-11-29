@@ -9,28 +9,30 @@ int main() {
     printf("-----BETTER LINKED LIST FEATURES-----\n");
     
     list charlist = initList_charnode();
-    charlist.createNode(&charlist, "This is a string!");
+    charlist.createNode(&charlist, "This is the first string!");
     charlist.createNode(&charlist, "This is the second string!");
     charlist.createNode(&charlist, "This is the last string!");
-    printf("Length: %d\n", charlist.valuesize);    
     printf("\nBefore Deletion:\n");
-    charlist.print(&charlist, "%s\n");
-    charlist.deleteNode(&charlist, 1);
-    printf("After Deletion of %d:\n", 1);
-    charlist.print(&charlist, "%s\n");
-    printf("Length: %d\n", charlist.valuesize);
+    charlist.insertNode(&charlist, 2, "This was inserted!");
+    charlist.print(&charlist, "\t%s\n");
+    printf("\tLength: %d\n\n", charlist.valuesize);
+    charlist.deleteNode(&charlist, 2);
+    printf("After Deletion of %d:\n", 2);
+    charlist.print(&charlist, "\t%s\n");
+    printf("\tLength: %d\n", charlist.valuesize);
     
     list intlist = initList_intnode();
     intlist.createNode(&intlist, 11);
     intlist.createNode(&intlist, 22);
     intlist.createNode(&intlist, 33);
-    printf("Length: %d\n", intlist.valuesize);
     printf("\nBefore Deletion:\n");
-    intlist.print(&intlist, "%d\n");
-    intlist.deleteNode(&intlist, 2);
-    printf("After Deletion of %d:\n", 2);
-    intlist.print(&intlist, "%d\n");
-    printf("Length: %d\n", intlist.valuesize);
+    intlist.insertNode(&intlist, 3, 1337);
+    intlist.print(&intlist, "\t%d\n");
+    printf("\tLength: %d\n\n", intlist.valuesize);
+    intlist.deleteNode(&intlist, 1);
+    printf("After Deletion of %d:\n", 1);
+    intlist.print(&intlist, "\t%d\n");
+    printf("\tLength: %d\n", intlist.valuesize);
 
 
     printf("\n-----BETTER STRING FEATURES-----\n");
