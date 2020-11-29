@@ -15,8 +15,8 @@ int main() {
     printf("Length: %d\n", charlist.valuesize);    
     printf("\nBefore Deletion:\n");
     charlist.print(&charlist, "%s\n");
-    charlist.deleteNode(&charlist, 2);
-    printf("After Deletion:\n");
+    charlist.deleteNode(&charlist, 1);
+    printf("After Deletion of %d:\n", 1);
     charlist.print(&charlist, "%s\n");
     printf("Length: %d\n", charlist.valuesize);
     
@@ -28,7 +28,7 @@ int main() {
     printf("\nBefore Deletion:\n");
     intlist.print(&intlist, "%d\n");
     intlist.deleteNode(&intlist, 2);
-    printf("After Deletion:\n");
+    printf("After Deletion of %d:\n", 2);
     intlist.print(&intlist, "%d\n");
     printf("Length: %d\n", intlist.valuesize);
 
