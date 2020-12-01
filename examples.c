@@ -48,6 +48,8 @@ int main() {
     printf("Userinput test: ");
     test.input(&test, 1024);
     printf("User typed: %s\nThe length was: %d\n", test.value, test.length(&test));
+    test.loadfile(&test, "readtest.txt");
+    test.print(&test);
 
     return 0;
 }

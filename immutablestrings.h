@@ -1,7 +1,6 @@
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
 
 /*
 --------------------------------------------------
@@ -111,6 +110,7 @@ typedef struct string_s {
     char *value;
     void (*print)(struct string_s *self);
     void (*input)(struct string_s *self, int blocksize);
+    void (*loadfile)(struct string_s *this, char *filename);
     int (*length)(struct string_s *self);
     void (*append)(struct string_s *self, char *to_append);
     int (*find)(struct string_s *self, char *to_find);
@@ -142,6 +142,24 @@ void string_input(string *self, int blocksize) {
 
     free(self->value);
     self->value = userinput;
+}
+
+void string_loadfile(string *self, char *filename) {
+
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        printf("ERROR: Failed to open file.\n");
+        exit(1);
+    }
+
+    fseek(file, 0, SEEK_END);
+    int filelen = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    free(self->value);
+    self->value = malloc(filelen);
+    fread(self->value, 1, filelen, file);
+    self->value[filelen] = '\0';
 }
 
 int string_length(string *self) {
@@ -239,6 +257,7 @@ string initString(char *initstring) {
         immutablestring,
         &string_print,
         &string_input,
+        &string_loadfile,
         &string_length,
         &string_append,
         &string_find,
