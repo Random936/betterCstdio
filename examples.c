@@ -43,13 +43,22 @@ int main() {
     test.print(&test);
     printf("Found: %d, Length: %d\n", test.find(&test, "test"), test.length(&test));
     printf("Substring: %s\n", test.substr(&test, 7, 11));
-    test.replace(&test, "test", "supercalafragalisticexpialadocious");
+    test.replace(&test, "test", "supercalifragilisticexpialidocious");
     printf("Replaced: %s\n", test.value);
     printf("Userinput test: ");
     test.input(&test, 1024);
     printf("User typed: %s\nThe length was: %d\n", test.value, test.length(&test));
-    test.loadfile(&test, "readtest.txt");
-    printf("%s\nSize: %d\n", test.value, test.size);
+
+
+    printf("\n-----BETTER FILES-----\n");
+
+    filestream writetest = initFilestream("filetest.txt", FILESTREAM_WRITE);
+    writetest.write(&writetest, "This will be written to the file.", sizeof(char) * 33);
+    fclose(writetest.desc);
+
+    filestream readtest = initFilestream("filetest.txt", FILESTREAM_READ);
+    printf("File content: %s\n", readtest.read(&readtest));
+    fclose(readtest.desc);
 
     return 0;
 }

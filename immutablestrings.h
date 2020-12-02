@@ -111,7 +111,7 @@ typedef struct string_s {
     int size;
     void (*print)(struct string_s *self);
     void (*input)(struct string_s *self, int blocksize);
-    void (*loadfile)(struct string_s *this, char *filename);
+    void (*resize)(struct string_s *self, int newsize);
     int (*length)(struct string_s *self);
     void (*append)(struct string_s *self, char *to_append);
     int (*find)(struct string_s *self, char *to_find);
@@ -145,25 +145,12 @@ void string_input(string *self, int blocksize) {
 
     free(self->value);
     self->value = userinput;
+    fclose(stdinfd);
 }
 
-void string_loadfile(string *self, char *filename) {
-
-    FILE *file = fopen(filename, "r");
-    if (!file) {
-        printf("ERROR: Failed to open file.\n");
-        exit(1);
-    }
-
-    fseek(file, 0, SEEK_END);
-    int filelen = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    free(self->value);
-    self->value = malloc(filelen);
-    self->size = filelen;
-    fread(self->value, filelen , 1, file);
-    self->value[filelen] = '\0';
+void string_resize(string *self, int newsize) {
+    self->size = newsize;
+    self->value = realloc(self->value, newsize);
 }
 
 int string_length(string *self) {
@@ -266,7 +253,7 @@ string initString(char *initstring) {
         stringsize,
         &string_print,
         &string_input,
-        &string_loadfile,
+        &string_resize,
         &string_length,
         &string_append,
         &string_find,
@@ -275,4 +262,106 @@ string initString(char *initstring) {
     };
 
     return string_default;
+}
+
+/*
+--------------------------------------------------
+    Better Files
+--------------------------------------------------
+*/
+
+#define FILESTREAM_APPEND 16
+#define FILESTREAM_TRUNC 8
+#define FILESTREAM_READ 4
+#define FILESTREAM_WRITE 2
+#define FILESTREAM_BINARY 1
+
+typedef struct filestream_s {
+    char *(*read)(struct filestream_s *self);
+    void (*write)(struct filestream_s *self, char *content, int contentsize);
+    FILE *desc;
+    int size;
+} filestream;
+
+char *filestream_read(filestream *self) {
+    char *filecontent = malloc(self->size);
+    fread(filecontent, self->size, 1, self->desc);
+    filecontent[self->size] = '\0';
+    return filecontent;
+}
+
+void filestream_write(filestream *self, char *content, int contentsize) {
+    fwrite(content, contentsize, 1, self->desc);
+}
+
+filestream initFilestream(char *filename, int options) {
+
+    filestream file_default = {
+        &filestream_read,
+        &filestream_write
+    };
+
+    switch (options) {
+        case 2:
+            file_default.desc = fopen(filename, "w");
+            break;
+        case 3:
+            file_default.desc = fopen(filename, "wb");
+            break;
+        case 4:
+            file_default.desc = fopen(filename, "r");
+            break;
+        case 5:
+            file_default.desc = fopen(filename, "rb");
+            break;
+        case 6:
+            file_default.desc = fopen(filename, "r+");
+            break;
+        case 7:
+            file_default.desc = fopen(filename, "r+b");
+            break;
+        case 8:
+            file_default.desc = fopen(filename, "w+");
+            break;
+        case 9:
+            file_default.desc = fopen(filename, "w+b");
+            break;
+        case 16:
+            file_default.desc = fopen(filename, "a");
+            break;
+        case 17:
+            file_default.desc = fopen(filename, "ab");
+            break;
+        case 20:
+            file_default.desc = fopen(filename, "a+");
+            break;
+        case 21:
+            file_default.desc = fopen(filename, "a+b");
+            break;
+        default:
+            printf("ERROR: Incorrect use of file options.");
+            exit(1);
+    }
+
+    fseek(file_default.desc, 0, SEEK_END);
+    file_default.size = ftell(file_default.desc);
+    fseek(file_default.desc, 0, SEEK_SET);
+    
+    return file_default;
+}
+
+
+
+int getFileSize(FILE *file) {
+
+    if (!file) {
+        printf("ERROR: Failed to open file.\n");
+        exit(1);
+    }
+
+    fseek(file, 0, SEEK_END);
+    int filelen = ftell(file);
+    fclose(file);
+
+    return filelen;
 }
