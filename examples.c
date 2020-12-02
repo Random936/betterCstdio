@@ -1,4 +1,4 @@
-#include "immutablestrings.h"
+#include "bettercstdio.h"
 
 // This function is used to create a node template.
 declareLinkedList(int, intnode)
