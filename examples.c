@@ -49,7 +49,7 @@ int main() {
     test.input(&test, 1024);
     printf("User typed: %s\nThe length was: %d\n", test.value, test.length(&test));
     test.loadfile(&test, "readtest.txt");
-    test.print(&test);
+    printf("%s\nSize: %d\n", test.value, test.size);
 
     return 0;
 }

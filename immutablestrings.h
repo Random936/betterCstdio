@@ -108,6 +108,7 @@ list initList_##name() { \
 
 typedef struct string_s {
     char *value;
+    int size;
     void (*print)(struct string_s *self);
     void (*input)(struct string_s *self, int blocksize);
     void (*loadfile)(struct string_s *this, char *filename);
@@ -129,13 +130,15 @@ void string_input(string *self, int blocksize) {
     FILE *stdinfd = stdin;
     char current;
     int mallocsize = blocksize;
-    char *userinput = malloc(sizeof(char) * mallocsize);
+    self->size = sizeof(char) * mallocsize;
+    char *userinput = malloc(self->size);
 
     int length;
     for (length = 0; (current = getc(stdin)) != '\n'; length++) {
         if (length >= mallocsize - 1) {
             mallocsize += blocksize;
-            userinput = realloc(userinput, sizeof(char) * mallocsize);
+            self->size = sizeof(char) * mallocsize;
+            userinput = realloc(userinput, self->size);
         }
         userinput[length] = current;
     } userinput[length] = '\0';
@@ -158,7 +161,8 @@ void string_loadfile(string *self, char *filename) {
 
     free(self->value);
     self->value = malloc(filelen);
-    fread(self->value, 1, filelen, file);
+    self->size = filelen;
+    fread(self->value, filelen , 1, file);
     self->value[filelen] = '\0';
 }
 
@@ -175,7 +179,8 @@ void string_append(string *self, char *to_append) {
     selflen = self->length(self);
     totallen = appendlen + selflen;
 
-    char *tempptr = malloc(sizeof(char) * totallen + 1);
+    self->size = sizeof(char) * totallen;
+    char *tempptr = malloc(self->size);
     for (int i = 0; i <= selflen; i++) {
         tempptr[i] = self->value[i];
     }
@@ -207,7 +212,8 @@ int string_find(string *self, char *to_find) {
 char *string_substring(string *self, int startpos, int endpos) {
 
     int sublength = endpos - startpos;
-    char *returnedstring = malloc(sizeof(char) * sublength);
+    self->size = sizeof(char) * sublength;
+    char *returnedstring = malloc(self->size);
     if (startpos > endpos) {
         printf("ERROR: Substring start position must be less than the end position.\n");
         return NULL;
@@ -241,6 +247,7 @@ void string_replace(string *self, char *to_replace, char *replacement) {
 
     free(self->value);
     self->value = returnedstring.value;
+    self->size = returnedstring.size;
 }
 
 string initString(char *initstring) {
@@ -248,13 +255,15 @@ string initString(char *initstring) {
     int stringlen;
     for (stringlen = 0; initstring[stringlen] != '\0'; stringlen++);
 
-    char *immutablestring = malloc(sizeof(char) * (stringlen + 1));
+    int stringsize = sizeof(char) * (stringlen + 1);
+    char *immutablestring = malloc(stringsize);
     for (int i = 0; i < stringlen; i++) {
         immutablestring[i] = initstring[i];
     } immutablestring[stringlen] = '\0';
     
     string string_default = {
         immutablestring,
+        stringsize,
         &string_print,
         &string_input,
         &string_loadfile,
