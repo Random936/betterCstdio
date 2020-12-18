@@ -1,7 +1,7 @@
 # Better C stdio
 
-This library adds simple implimentations that improve the "quality of life" in programming. By adding features such as immutable/dynamic strings, you no longer have to sacrifice qualities found in other slower programming languages. By adding this library, you will have access to the following:
-- Immutable/Dynamic Strings
+This library adds simple implimentations that improve the "quality of life" in programming. By adding features such as mutable/dynamic strings, you no longer have to sacrifice qualities found in other slower programming languages. By adding this library, you will have access to the following:
+- Mutable/Dynamic Strings
 - Easy Linked Lists
 
   
@@ -12,9 +12,9 @@ Over time, more will be added to this library. C is my best language as well as 
 
 ## Examples & Documentation
 
-### Immutable/Dynamic Strings
+### Mutable/Dynamic Strings
 
-Nowdays, it is very uncommon to find a language that does not have immutable or dynamically allocated strings. In this library, strings are implemented with basic object oriented programming features. In C, object oriented programming is made possible with the use of function pointers. Though, it does come with a few drawbacks. 
+Nowdays, it is very uncommon to find a language that does not have Mutable or dynamically allocated strings. In this library, strings are implemented with basic object oriented programming features. In C, object oriented programming is made possible with the use of function pointers. Though, it does come with a few drawbacks. 
 The first drawback is the required inititializer function. This function must be called upon creation of the struct as without it, the function pointers will not be pointing to anything. The standard initialization of a string is shown below.
 ```
 // Without a string
