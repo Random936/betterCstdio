@@ -284,6 +284,11 @@ typedef struct filestream_s {
 } filestream;
 
 char *filestream_read(filestream *self) {
+
+    fseek(self->desc, 0, SEEK_END);
+    self->size = ftell(self->desc);
+    rewind(self->desc);
+
     char *filecontent = malloc(self->size);
     fread(filecontent, self->size, 1, self->desc);
     filecontent[self->size] = '\0';
@@ -292,6 +297,9 @@ char *filestream_read(filestream *self) {
 
 void filestream_write(filestream *self, char *content, int contentsize) {
     fwrite(content, contentsize, 1, self->desc);
+    fseek(self->desc, 0, SEEK_END);
+    self->size = ftell(self->desc);
+    rewind(self->desc);
 }
 
 filestream initFilestream(char *filename, int options) {
@@ -345,23 +353,7 @@ filestream initFilestream(char *filename, int options) {
 
     fseek(file_default.desc, 0, SEEK_END);
     file_default.size = ftell(file_default.desc);
-    fseek(file_default.desc, 0, SEEK_SET);
+    rewind(file_default.desc);
     
     return file_default;
-}
-
-
-
-int getFileSize(FILE *file) {
-
-    if (!file) {
-        printf("ERROR: Failed to open file.\n");
-        exit(1);
-    }
-
-    fseek(file, 0, SEEK_END);
-    int filelen = ftell(file);
-    fclose(file);
-
-    return filelen;
 }

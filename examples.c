@@ -54,6 +54,7 @@ int main() {
 
     filestream writetest = initFilestream("filetest.txt", FILESTREAM_WRITE);
     writetest.write(&writetest, "This will be written to the file.", sizeof(char) * 33);
+    printf("File size: %d\n", writetest.size);
     fclose(writetest.desc);
 
     filestream readtest = initFilestream("filetest.txt", FILESTREAM_READ);
