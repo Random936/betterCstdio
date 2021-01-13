@@ -13,10 +13,10 @@ int main() {
     charlist.createNode(&charlist, "This is the second string!");
     charlist.createNode(&charlist, "This is the last string!");
     printf("\nBefore Deletion:\n");
-    charlist.insertNode(&charlist, 2, "This was inserted!");
+    charlist.remove(&charlist, 2, "This was inserted!");
     charlist.print(&charlist, "\t%s\n");
     printf("\tLength: %d\n\n", charlist.valuesize);
-    charlist.deleteNode(&charlist, 2);
+    charlist.remove(&charlist, 2);
     printf("After Deletion of %d:\n", 2);
     charlist.print(&charlist, "\t%s\n");
     printf("\tLength: %d\n", charlist.valuesize);
@@ -26,10 +26,10 @@ int main() {
     intlist.createNode(&intlist, 22);
     intlist.createNode(&intlist, 33);
     printf("\nBefore Deletion:\n");
-    intlist.insertNode(&intlist, 3, 1337);
+    intlist.insert(&intlist, 3, 1337);
     intlist.print(&intlist, "\t%d\n");
     printf("\tLength: %d\n\n", intlist.valuesize);
-    intlist.deleteNode(&intlist, 1);
+    intlist.remove(&intlist, 1);
     printf("After Deletion of %d:\n", 1);
     intlist.print(&intlist, "\t%d\n");
     printf("\tLength: %d\n", intlist.valuesize);
