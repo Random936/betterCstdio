@@ -214,27 +214,38 @@ char *string_substring(string *self, int startpos, int endpos) {
 
 void string_replace(string *self, char *to_replace, char *replacement) {
 
-    int to_replace_len, foundpos;
+    int to_replace_len, replacement_length, found_position;
     for (to_replace_len = 0; to_replace[to_replace_len] != '\0'; to_replace_len++);
+    for (replacement_length = 0; replacement[replacement_length] != '\0'; replacement_length++);
 
-    string returnedstring = initString("");
-    while ((foundpos = self->find(self, to_replace)) != -1) {
-        char *substring = self->substr(self, 0, foundpos);
-        returnedstring.append(&returnedstring, substring);
-        free(substring);
-        returnedstring.append(&returnedstring, replacement);
-        self->value += foundpos + to_replace_len;
+    int returnedsize = 0;
+    char *returnedstring = malloc(sizeof(char));
+    while ((found_position = self->find(self, to_replace)) != -1) {
+
+        returnedstring = realloc(returnedstring, sizeof(char) * (returnedsize + found_position + replacement_length));
+
+        for (int i = 0; i < found_position; i++) {
+            returnedstring[returnedsize + i] = self->value[i];
+        }
+
+        for (int i = 0; i < replacement_length; i++) {
+            returnedstring[returnedsize + found_position + i] = replacement[i];
+        }
+
+        returnedsize += found_position + replacement_length;
+        self->value += found_position + to_replace_len;
     }
 
     if (self->value[0] != '\0') {
-        char *substring = self->substr(self, 0, self->length(self));
-        returnedstring.append(&returnedstring, substring);
-        free(substring);
-    }
+        int endlength;
+        for (endlength = 0; self->value[endlength] != '\0'; endlength++) {
+            returnedstring[returnedsize + endlength] = self->value[endlength];
+        } returnedsize += endlength;
+    } returnedstring[returnedsize] = '\0';
 
     free(self->value);
-    self->value = returnedstring.value;
-    self->size = returnedstring.size;
+    self->value = returnedstring;
+    self->size = returnedsize;
 }
 
 string initString(char *initstring) {

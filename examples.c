@@ -39,7 +39,7 @@ int main() {
 
     string test = initString("Tester");
     test.print(&test);
-    test.append(&test, " test!");
+    test.append(&test, " test! Also this.");
     test.print(&test);
     printf("Found: %d, Length: %d\n", test.find(&test, "test"), test.length(&test));
     printf("Substring: %s\n", test.substr(&test, 7, 11));
