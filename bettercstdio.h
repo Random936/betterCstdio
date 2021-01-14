@@ -127,25 +127,22 @@ void string_print(string *self) {
 
 void string_input(string *self, int blocksize) {
     
-    FILE *stdinfd = stdin;
     char current;
     int mallocsize = blocksize;
-    self->size = sizeof(char) * mallocsize;
-    char *userinput = malloc(self->size);
-
+    char *userinput = malloc(sizeof(char) * blocksize);
     int length;
     for (length = 0; (current = getc(stdin)) != '\n'; length++) {
         if (length >= mallocsize - 1) {
             mallocsize += blocksize;
-            self->size = sizeof(char) * mallocsize;
-            userinput = realloc(userinput, self->size);
+            userinput = realloc(userinput, mallocsize);
         }
         userinput[length] = current;
     } userinput[length] = '\0';
 
+    userinput = realloc(userinput, length);
     free(self->value);
     self->value = userinput;
-    fclose(stdinfd);
+    self->size = length;
 }
 
 void string_resize(string *self, int newsize) {
@@ -219,7 +216,7 @@ void string_replace(string *self, char *to_replace, char *replacement) {
     for (replacement_length = 0; replacement[replacement_length] != '\0'; replacement_length++);
 
     int returnedsize = 0;
-    char *returnedstring = malloc(sizeof(char));
+    char *returnedstring = malloc(0);
     while ((found_position = self->find(self, to_replace)) != -1) {
 
         returnedstring = realloc(returnedstring, sizeof(char) * (returnedsize + found_position + replacement_length));
@@ -237,6 +234,7 @@ void string_replace(string *self, char *to_replace, char *replacement) {
     }
 
     if (self->value[0] != '\0') {
+        returnedstring = realloc(returnedstring, returnedsize + self->length(self));
         int endlength;
         for (endlength = 0; self->value[endlength] != '\0'; endlength++) {
             returnedstring[returnedsize + endlength] = self->value[endlength];
@@ -246,6 +244,7 @@ void string_replace(string *self, char *to_replace, char *replacement) {
     free(self->value);
     self->value = returnedstring;
     self->size = returnedsize;
+    printf("Length test: %d\n", self->length(self));
 }
 
 string initString(char *initstring) {

@@ -43,7 +43,7 @@ int main() {
     test.print(&test);
     printf("Found: %d, Length: %d\n", test.find(&test, "test"), test.length(&test));
     printf("Substring: %s\n", test.substr(&test, 7, 11));
-    test.replace(&test, "test", "supercalifragilisticexpialidocious");
+    test.replace(&test, "test", "pneumonoultramicroscopicsilicovolcanoconiosis");
     printf("Replaced: %s\n", test.value);
     printf("Userinput test: ");
     test.input(&test, 1024);
