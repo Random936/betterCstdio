@@ -9,9 +9,9 @@ int main() {
     printf("-----BETTER LINKED LIST FEATURES-----\n");
     
     list charlist = initList_charnode();
-    charlist.createNode(&charlist, "This is the first string!");
-    charlist.createNode(&charlist, "This is the second string!");
-    charlist.createNode(&charlist, "This is the last string!");
+    charlist.create(&charlist, "This is the first string!");
+    charlist.create(&charlist, "This is the second string!");
+    charlist.create(&charlist, "This is the last string!");
     printf("\nBefore Deletion:\n");
     charlist.remove(&charlist, 2, "This was inserted!");
     charlist.print(&charlist, "\t%s\n");
@@ -22,9 +22,9 @@ int main() {
     printf("\tLength: %d\n", charlist.valuesize);
     
     list intlist = initList_intnode();
-    intlist.createNode(&intlist, 11);
-    intlist.createNode(&intlist, 22);
-    intlist.createNode(&intlist, 33);
+    intlist.create(&intlist, 11);
+    intlist.create(&intlist, 22);
+    intlist.create(&intlist, 33);
     printf("\nBefore Deletion:\n");
     intlist.insert(&intlist, 3, 1337);
     intlist.print(&intlist, "\t%d\n");
@@ -46,7 +46,7 @@ int main() {
     test.replace(&test, "test", "pneumonoultramicroscopicsilicovolcanoconiosis");
     printf("Replaced: %s\n", test.value);
     printf("Userinput test: ");
-    test.input(&test, 1024);
+    test.input(&test, 10);
     printf("User typed: %s\nThe length was: %d\n", test.value, test.length(&test));
 
 

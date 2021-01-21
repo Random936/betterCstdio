@@ -10,7 +10,7 @@
 
 typedef struct list_s {
     int valuesize;
-    void (*createNode)();
+    void (*create)();
     void (*insert)();
     void (*remove)();
     void (*print)(struct list_s *self, char *formatter);
@@ -196,12 +196,13 @@ int string_find(string *self, char *to_find) {
 char *string_substring(string *self, int startpos, int endpos) {
 
     int sublength = endpos - startpos;
-    self->size = sizeof(char) * sublength;
-    char *returnedstring = malloc(self->size);
-    if (startpos > endpos) {
+    if (startpos > endpos || startpos < 0 || endpos > self->size) {
         printf("ERROR: Substring start position must be less than the end position.\n");
         return NULL;
     }
+
+    char *returnedstring = malloc(sizeof(char) * sublength);
+
     for (int i = 0; i < sublength; i++) {
         returnedstring[i] = self->value[startpos + i];
     } returnedstring[sublength] = '\0';
@@ -216,7 +217,7 @@ void string_replace(string *self, char *to_replace, char *replacement) {
     for (replacement_length = 0; replacement[replacement_length] != '\0'; replacement_length++);
 
     int returnedsize = 0;
-    char *returnedstring = malloc(0);
+    char *returnedstring = malloc(sizeof(char));
     while ((found_position = self->find(self, to_replace)) != -1) {
 
         returnedstring = realloc(returnedstring, sizeof(char) * (returnedsize + found_position + replacement_length));
@@ -234,17 +235,21 @@ void string_replace(string *self, char *to_replace, char *replacement) {
     }
 
     if (self->value[0] != '\0') {
-        returnedstring = realloc(returnedstring, returnedsize + self->length(self));
-        int endlength;
-        for (endlength = 0; self->value[endlength] != '\0'; endlength++) {
-            returnedstring[returnedsize + endlength] = self->value[endlength];
-        } returnedsize += endlength;
-    } returnedstring[returnedsize] = '\0';
+
+        int endlength = self->length(self);
+        returnedstring = realloc(returnedstring, returnedsize + endlength + 1);
+        
+        for (int i = 0; self->value[i] != '\0'; i++) {
+            returnedstring[returnedsize + i] = self->value[i];
+        }
+
+        returnedsize += endlength;
+    }
+    returnedstring[returnedsize] = '\0';
 
     free(self->value);
     self->value = returnedstring;
     self->size = returnedsize;
-    printf("Length test: %d\n", self->length(self));
 }
 
 string initString(char *initstring) {
@@ -252,15 +257,14 @@ string initString(char *initstring) {
     int stringlen;
     for (stringlen = 0; initstring[stringlen] != '\0'; stringlen++);
 
-    int stringsize = sizeof(char) * (stringlen + 1);
-    char *immutablestring = malloc(stringsize);
+    char *immutablestring = malloc(sizeof(char) * (stringlen + 1));
     for (int i = 0; i < stringlen; i++) {
         immutablestring[i] = initstring[i];
     } immutablestring[stringlen] = '\0';
     
     string string_default = {
         immutablestring,
-        stringsize,
+        stringlen + 1,
         &string_print,
         &string_input,
         &string_resize,
