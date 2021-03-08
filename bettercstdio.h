@@ -1,6 +1,7 @@
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /*
 --------------------------------------------------
@@ -114,7 +115,8 @@ typedef struct string_s {
     void (*resize)(struct string_s *self, int newsize);
     int (*length)(struct string_s *self);
     void (*append)(struct string_s *self, char *to_append);
-    int (*find)(struct string_s *self, char *to_find);
+    int (*find)(struct string_s *self, char *to_find, int startpos);
+    int *(*findall)(struct string_s *self, char *to_find);
     char *(*substr)(struct string_s *self, int startpos, int endpos);
     void (*replace)(struct string_s *self, char *to_replace, char *replacement);
 } string;
@@ -151,40 +153,38 @@ void string_resize(string *self, int newsize) {
 }
 
 int string_length(string *self) {
-    int length;
-    for (length = 0; self->value[length] != 0; length++);
-    return length;
+    return strlen(self->value);
 }
 
 void string_append(string *self, char *to_append) {
 
-    int appendlen, selflen, totallen;
-    for (appendlen = 0; to_append[appendlen] != '\0'; appendlen++);
+    int appendlen = strlen(to_append);
+    int selflen, totallen;
+
     selflen = self->length(self);
     totallen = appendlen + selflen;
+    self->value = realloc(self->value, totallen);
+    self->size = totallen;
 
-    self->size = sizeof(char) * totallen;
-    char *tempptr = malloc(self->size);
-    for (int i = 0; i <= selflen; i++) {
-        tempptr[i] = self->value[i];
-    }
     for (int i = 0; i <= appendlen; i++) {
-        tempptr[i + selflen] = to_append[i];
-    } tempptr[totallen] = '\0';
+        self->value[i + selflen] = to_append[i];
+    } self->value[totallen] = '\0';
 
-    free(self->value);
-    self->value = tempptr;
 }
 
-int string_find(string *self, char *to_find) {
+int string_find(string *self, char *to_find, int startpos) {
 
-    int findlen, match;
-    for (findlen = 0; to_find[findlen] != '\0'; findlen++);
+    if (self->length(self) <= startpos) {
+        return -1;
+    }
 
-    for (int i = 0; self->value[i] != '\0'; i++) {
+    int findlen = strlen(to_find);
+
+    for (int i = startpos; self->value[i] != '\0'; i++) {
         if (self->value[i] == to_find[0]) {
-            for (match = 0; (to_find[match] == self->value[i + match]) && (to_find[match] != '\0'); match++);
-            if (match >= findlen) {
+            int match = 0;
+            for ( ; (to_find[match] == self->value[i + match]) && (to_find[match] != '\0'); match++);
+            if (match == findlen) {
                 return i;
             }
         }
@@ -193,16 +193,37 @@ int string_find(string *self, char *to_find) {
     return -1;
 }
 
+int *string_findall(string *self, char *to_find) {
+
+    int findlen = strlen(to_find);
+    int *positions = malloc(0);
+    int found_num = 0;
+
+    for (int i = 0; self->value[i] != '\0'; i++) {
+        if (self->value[i] == to_find[0]) {
+            int match = 0;
+            for ( ; (to_find[match] == self->value[i + match]) && (to_find[match] != '\0'); match++);
+            if (match == findlen) {
+                positions = realloc(positions, sizeof(int) * (found_num + 1));
+                positions[found_num] = i;
+                found_num++;
+            }
+        }
+    }
+
+    return positions;
+
+}
+
 char *string_substring(string *self, int startpos, int endpos) {
 
     int sublength = endpos - startpos;
     if (startpos > endpos || startpos < 0 || endpos > self->size) {
-        printf("ERROR: Substring start position must be less than the end position.\n");
+        fprintf(stderr, "ERROR: Substring start position must be less than the end position.\n");
         return NULL;
     }
 
     char *returnedstring = malloc(sizeof(char) * sublength);
-
     for (int i = 0; i < sublength; i++) {
         returnedstring[i] = self->value[startpos + i];
     } returnedstring[sublength] = '\0';
@@ -212,50 +233,45 @@ char *string_substring(string *self, int startpos, int endpos) {
 
 void string_replace(string *self, char *to_replace, char *replacement) {
 
-    int to_replace_len, replacement_length, found_position;
-    for (to_replace_len = 0; to_replace[to_replace_len] != '\0'; to_replace_len++);
-    for (replacement_length = 0; replacement[replacement_length] != '\0'; replacement_length++);
+    int value_len = strlen(self->value);
+    int to_rep_len = strlen(to_replace);
+    int rep_len = strlen(replacement);
 
-    int returnedsize = 0;
-    char *returnedstring = malloc(sizeof(char));
-    while ((found_position = self->find(self, to_replace)) != -1) {
+    int found_num = 0;
+    int *positions = self->findall(self, to_replace);
+    for ( ; positions[found_num] != 0; found_num++);
+    self->size = value_len - (to_rep_len * found_num) + (rep_len * found_num);
+    char *ret_str = malloc(self->size);
+    
+    int value_pos = 0, ret_pos = 0;
+    while (value_pos < value_len) {
 
-        returnedstring = realloc(returnedstring, sizeof(char) * (returnedsize + found_position + replacement_length));
+        ret_str[ret_pos] = self->value[value_pos];
 
-        for (int i = 0; i < found_position; i++) {
-            returnedstring[returnedsize + i] = self->value[i];
+        if (value_pos == *positions && *positions != 0) {
+
+            for (int i = 0; i < rep_len; i++) {
+                ret_str[ret_pos + i] = replacement[i];
+            }
+
+            value_pos += to_rep_len;
+            ret_pos += rep_len;
+            positions++;
+        } else {
+
+            value_pos++;
+            ret_pos++;
         }
-
-        for (int i = 0; i < replacement_length; i++) {
-            returnedstring[returnedsize + found_position + i] = replacement[i];
-        }
-
-        returnedsize += found_position + replacement_length;
-        self->value += found_position + to_replace_len;
     }
-
-    if (self->value[0] != '\0') {
-
-        int endlength = self->length(self);
-        returnedstring = realloc(returnedstring, returnedsize + endlength + 1);
-        
-        for (int i = 0; self->value[i] != '\0'; i++) {
-            returnedstring[returnedsize + i] = self->value[i];
-        }
-
-        returnedsize += endlength;
-    }
-    returnedstring[returnedsize] = '\0';
 
     free(self->value);
-    self->value = returnedstring;
-    self->size = returnedsize;
+    self->value = ret_str;
+    
 }
 
 string initString(char *initstring) {
 
-    int stringlen;
-    for (stringlen = 0; initstring[stringlen] != '\0'; stringlen++);
+    int stringlen = strlen(initstring);
 
     char *immutablestring = malloc(sizeof(char) * (stringlen + 1));
     for (int i = 0; i < stringlen; i++) {
@@ -271,6 +287,7 @@ string initString(char *initstring) {
         &string_length,
         &string_append,
         &string_find,
+        &string_findall,
         &string_substring,
         &string_replace
     };
@@ -283,12 +300,6 @@ string initString(char *initstring) {
     Better Files
 --------------------------------------------------
 */
-
-#define FILESTREAM_APPEND 16
-#define FILESTREAM_TRUNC 8
-#define FILESTREAM_READ 4
-#define FILESTREAM_WRITE 2
-#define FILESTREAM_BINARY 1
 
 typedef struct filestream_s {
     char *(*read)(struct filestream_s *self);
@@ -316,54 +327,14 @@ void filestream_write(filestream *self, char *content, int contentsize) {
     rewind(self->desc);
 }
 
-filestream initFilestream(char *filename, int options) {
+filestream initFilestream(char *filename, char *options) {
 
     filestream file_default = {
         &filestream_read,
         &filestream_write
     };
 
-    switch (options) {
-        case 2:
-            file_default.desc = fopen(filename, "w");
-            break;
-        case 3:
-            file_default.desc = fopen(filename, "wb");
-            break;
-        case 4:
-            file_default.desc = fopen(filename, "r");
-            break;
-        case 5:
-            file_default.desc = fopen(filename, "rb");
-            break;
-        case 6:
-            file_default.desc = fopen(filename, "r+");
-            break;
-        case 7:
-            file_default.desc = fopen(filename, "r+b");
-            break;
-        case 8:
-            file_default.desc = fopen(filename, "w+");
-            break;
-        case 9:
-            file_default.desc = fopen(filename, "w+b");
-            break;
-        case 16:
-            file_default.desc = fopen(filename, "a");
-            break;
-        case 17:
-            file_default.desc = fopen(filename, "ab");
-            break;
-        case 20:
-            file_default.desc = fopen(filename, "a+");
-            break;
-        case 21:
-            file_default.desc = fopen(filename, "a+b");
-            break;
-        default:
-            printf("ERROR: Incorrect use of file options.");
-            exit(1);
-    }
+    file_default.desc = fopen(filename, options);
 
     fseek(file_default.desc, 0, SEEK_END);
     file_default.size = ftell(file_default.desc);

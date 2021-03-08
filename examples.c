@@ -40,8 +40,9 @@ int main() {
     string test = initString("Tester");
     test.print(&test);
     test.append(&test, " test! Also this.");
+    test.append(&test, " Did I mention this is a test? Yes!");
     test.print(&test);
-    printf("Found: %d, Length: %d\n", test.find(&test, "test"), test.length(&test));
+    printf("Found: %d, Length: %d\n", test.find(&test, "test", 0), test.length(&test));
     printf("Substring: %s\n", test.substr(&test, 7, 11));
     test.replace(&test, "test", "pneumonoultramicroscopicsilicovolcanoconiosis");
     printf("Replaced: %s\n", test.value);
@@ -52,12 +53,12 @@ int main() {
 
     printf("\n-----BETTER FILES-----\n");
 
-    filestream writetest = initFilestream("filetest.txt", FILESTREAM_WRITE);
+    filestream writetest = initFilestream("filetest.txt", "w");
     writetest.write(&writetest, "This will be written to the file.", sizeof(char) * 33);
     printf("File size: %d\n", writetest.size);
     fclose(writetest.desc);
 
-    filestream readtest = initFilestream("filetest.txt", FILESTREAM_READ);
+    filestream readtest = initFilestream("filetest.txt", "r");
     printf("File content: %s\n", readtest.read(&readtest));
     fclose(readtest.desc);
 
